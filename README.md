@@ -113,3 +113,12 @@ Tests: `npm test`. For hosting run `npm install && npm run build`, then deploy `
 ## v1.2 Workflow controls
 
 The PROJECT, MODEL, DETAIL, ANNOTATE, REVIEW and PUBLISH navigation entries are interactive buttons. Each opens a context panel of real actions connected to the shared model commands. Click an entry again or choose Close to collapse its panel. The Publish panel clearly distinguishes unmodified IFC source export from editable IFC round-trip (not implemented).
+
+
+## v1.4 construction and deployment repairs
+- Door/window creation in **Plan**: choose Door or Window, click/drag along an existing wall. Openings are hosted with `hostId`, width, z/sill elevation, and height. Start within 350 mm of a wall centerline.
+- A wall with hosted openings is rebuilt as segmented Three.js solids, leaving an actual clear opening in the WebGL preview. This is an explicitly **mesh preview**, not exact B-rep. Oblique host walls work in this preview.
+- Exact mode is independently tested with a 10×10×10 mm box volume and a Boolean cut. A Vite build and WASM initialization are required. Exact B-rep remains limited to axis-aligned solids, and the browser self-test must pass; unsupported components report warnings.
+- GitHub Pages must be set to **GitHub Actions** publishing **dist/**. Publishing repository-root source yields "uncompiled source deployment"; do not upload raw source as a Pages branch site.
+- `npm test` checks hosted opening placement and segmentation; `npm run build` requires dependencies installed via `npm install`.
+- **Not certified**: IFC edit roundtrip, regulated construction drawings, structural analysis, and certified quantity schedules.

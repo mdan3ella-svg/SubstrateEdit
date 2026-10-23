@@ -45,10 +45,10 @@ export function booleanCut(host,cutters){if(!cad)throw Error('B-rep kernel not i
 export const getExactVolume=s=>{if(!cad)throw Error('B-rep not initialized');return cad.shape(s).volume()};
 export function tessellate(solid,{tolerance=.3}={}){if(!cad)throw Error('B-rep not initialized');return cad.toBufferGeometryData(cad.shape(solid).mesh({tolerance}));}
 export function buildExactElements(objects){const solids=new Map(),errors=[],ids=new Set(objects.map(o=>o.id));
- for(const o of objects){if(o.visible===false||['line','dimension','opening','void'].includes(o.type))continue;
- try{let host=elementBox(o);const cutterObjects=objects.filter(c=>['opening','void'].includes(c.type)&&c.hostId===o.id);
- const cutters=cutterObjects.map(c=>{const spec=boxSpec(c);return {...spec,solid:null}});
+ for(const o of objects){if(o.visible===false||['line','dimension','opening','void','door','window'].includes(o.type))continue;
+ try{let host=elementBox(o);const cutterObjects=objects.filter(c=>['opening','void','door','window'].includes(c.type)&&c.hostId===o.id);
+ const cutters=cutterObjects.map(c=>{const x0=Math.min(c.x,c.x2),x1=Math.max(c.x,c.x2),y0=Math.min(c.y,c.y2),y1=Math.max(c.y,c.y2);const horiz=Math.abs(c.x2-c.x)>=Math.abs(c.y2-c.y);const depth=(Number(o.thickness)||200)+20;const spec={size:horiz?[Math.max(1,x1-x0),depth,Number(c.height)]:[depth,Math.max(1,y1-y0),Number(c.height)],origin:horiz?[x0,(c.y+c.y2)/2-depth/2,Number(c.z)]:[(c.x+c.x2)/2-depth/2,y0,Number(c.z)]};return {...spec,solid:null}});
  solids.set(o.id,cutters.length?booleanCut(host,cutters):host);
  }catch(e){errors.push({id:o.id,error:err(e)});}}
- for(const o of objects){if(['opening','void'].includes(o.type)&&!ids.has(o.hostId))errors.push({id:o.id,error:'Missing host ID'});}
+ for(const o of objects){if(['opening','void','door','window'].includes(o.type)&&!ids.has(o.hostId))errors.push({id:o.id,error:'Missing host ID'});}
  return {solids,errors};}

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {footprint} from '../core/geometry/index.js';
+import {wallSections} from '../core/geometry/openings.js';
 import {buildExactElements,kernelReady,tessellate} from '../core/geometry/brep/index.js';
 const palette={Concrete:0xb7c8c9,Steel:0x637986,Masonry:0xc6b39e,Timber:0xb58f62,Glass:0x92c8cb};
 export class GPUViewer{
@@ -35,6 +36,15 @@ export class GPUViewer{
    for(const [id,{solid,origin}] of result.solids){try{const data=tessellate(solid);const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(data.position,3));if(data.normal?.length)geo.setAttribute('normal',new THREE.BufferAttribute(data.normal,3));else geo.computeVertexNormals();if(data.index?.length)geo.setIndex(new THREE.BufferAttribute(data.index,1));geo.scale(.001,.001,.001);this.addElement(doc.objects.find(o=>o.id===id),geo,origin)}catch(e){errors.push({id,error:String(e.message||e)})}}
   }else{
    for(const o of doc.objects){if(o.visible===false||['line','dimension','opening','void'].includes(o.type))continue;
+    if(o.type==='wall' && doc.objects.some(c=>c.hostId===o.id)){
+      const dx=o.x2-o.x,dy=o.y2-o.y,L=Math.hypot(dx,dy),theta=Math.atan2(dy,dx);
+      for(const piece of wallSections(o,doc.objects)){
+       const len=(piece.end-piece.start)*.001,height=(piece.top-piece.bottom)*.001;
+       const geo=new THREE.BoxGeometry(len,(o.thickness||200)*.001,height);
+       geo.rotateZ(theta);const mid=(piece.start+piece.end)/2;
+       this.addElement(o,geo,[(o.x+Math.cos(theta)*mid)*.001*1000,(o.y+Math.sin(theta)*mid)*.001*1000,((o.z||0)+(piece.bottom+piece.top)/2)]);
+      }continue;
+    }
     const poly=footprint(o),z=Number(o.z)||0,h=Math.max(1,Number(o.height)||1);
     // Generic extruded polygon, including diagonal walls. Units converted to metres.
     const shape=new THREE.Shape();poly.forEach(([x,y],i)=>i?shape.lineTo(x*.001,y*.001):shape.moveTo(x*.001,y*.001));shape.closePath();
