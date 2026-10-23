@@ -9,7 +9,11 @@ export const kernelReady=()=>Boolean(cad);
 export async function initializeBrep(){
   if(cad)return cad;
   // The quick entry point initializes the OCCT WASM runtime itself.
-  const api=await import('brepjs/quick');
+  // Use explicit initialization so the browser can report kernel errors separately.
+  // This npm specifier must be rewritten by Vite during the production build.
+  const api=await import('brepjs');
+  const kernelId=await api.init();
+  if(!kernelId)throw Error('No OpenCascade WASM kernel was initialized');
   const b=api.box(10,10,10);
   const volume=api.shape(b).volume();
   if(!Number.isFinite(volume)||Math.abs(volume-1000)>1e-2)throw Error(`Exact box self-test failed: ${volume}`);

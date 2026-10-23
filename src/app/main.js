@@ -97,6 +97,11 @@ async function enableExactGPU(){
  if(!(await enableWebGL()))return false;
  if(exactReady){notice('Exact B-rep already active');return true;}
  try{setEngineStatus('OpenCascade WASM initializing…');notice('Running exact solid and Boolean verification…');
+  // GitHub Pages raw-source deployment cannot resolve npm specifiers.
+  // Never mark exact mode active if this is an unbuilt source deployment.
+  if (document.querySelector('script[type=module][src*=\"src/app/main.js\"]')) {
+    throw Error('Uncompiled source deployment detected. Configure GitHub Pages to use GitHub Actions and publish Vite dist/, not the repository root.');
+  }
   const {initializeBrep}=await import('../core/geometry/brep/index.js');
   const test=await initializeBrep();
   exactReady=true;const warnings=gpu.setModel(store.doc,{exact:true});gpu.fit();setView(view);
