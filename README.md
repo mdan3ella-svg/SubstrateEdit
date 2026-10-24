@@ -1,3 +1,7 @@
+# SUBSTRATE PRO v3.0 — Assembly profiles and on-screen hatches
+
+See `docs/LOD400_DETAIL_V30.md`. Manufacturer details are user-authored, not pre-certified or imported from vendors.
+
 # SUBSTRATE PRO — Functional AEC Detail Studio
 
 A compact, dependency-free **conceptual AEC modeler**, re-engineered using the workflow patterns supplied in the two SketchBIM and Surreal Interactive HTML references. Branding: SUBSTRATE PRO | Vertascan.
@@ -67,3 +71,13 @@ See docs/GEOMETRY_V25.md for upgraded operations and their verified scope.
 - **IBC / OBC Review** records jurisdiction, code edition/amendments, occupancy, construction type, fire-rating basis and responsible reviewer. The checklist reports missing data and explicitly defers substantive code determinations to qualified reviewers.
 - These records persist in `.substratepro` native JSON files. Model Audit includes level references, elevation deviations, and grid definition errors. Geometry and drawing tests run with Node and require no npm dependencies.
 - **NOT PROVIDED:** OpenCascade WASM B-rep, geometric fillet topology, general B-rep Boolean joining, manifold/watertight certification, IFC schema conformance, or IBC/OBC compliance certification. Those require a compiled exact kernel, topological verification and appropriate professional review. The bounded CSG model is not presented as interchangeable with those capabilities.
+
+## v2.7 Wall Polyline
+Continuous clicks create connected orthogonal wall paths with mitered plan outlines. See `docs/WALL_POLYLINE.md` for controls and geometry limitations.
+
+## v2.8 connected wall engine
+The orthogonal polyline wall preview now uses a unified 3D mesh boundary when matching elevations, heights, and no hosted cuts allow. Shared-corner edits propagate to the linked path. See `docs/COORDINATED_WALL_3D.md` for capability limits; this is not OpenCascade, GPU WebGL, or certified watertight B-rep geometry.
+
+## v2.9 2D detail graphics
+
+Enhanced hosted door/window graphics in Plan and SVG plotting, plus material-dependent ISO-inspired hatches. See `docs/DETAIL_GRAPHICS_V29.md`. The new `src/detail-graphics.mjs` is imported by `src/app.js` and `src/plot.mjs`; deploy all files together and keep the same relative directory structure. This is an intentionally scoped drafting-LOD improvement, not manufacturer-specific LOD 400 detailing.

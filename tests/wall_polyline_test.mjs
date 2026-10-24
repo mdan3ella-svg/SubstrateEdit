@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {constrainWall,wallPathSegments,miteredWallOutline,pathPoints} from '../src/wall-polyline.mjs';
+const p=[{x:0,y:0},{x:4000,y:0},{x:4000,y:3000}];
+assert.deepEqual(constrainWall({x:3980,y:110},{x:0,y:0}),{x:3980,y:0});
+assert.deepEqual(constrainWall({x:4100,y:3000},{x:4000,y:0}),{x:4000,y:3000});
+assert.deepEqual(constrainWall({x:4800,y:3000},{x:4000,y:0},{ortho:true,diagonal:true}),{x:4800,y:3000});
+const seg=wallPathSegments(p,{type:'wall',thickness:200,pathId:'test'});
+assert.equal(seg.length,2);assert.equal(seg[0].x2,seg[1].x1);assert.equal(seg[0].y2,seg[1].y1);
+assert.deepEqual(pathPoints(seg),p);
+const outline=miteredWallOutline(p,200);assert.equal(outline.length,6);
+assert(outline.every(v=>Number.isFinite(v.x)&&Number.isFinite(v.y)));
+assert(outline.some(v=>Math.abs(v.x-3900)<1e-8&&Math.abs(v.y-100)<1e-8));
+assert.throws(()=>wallPathSegments([{x:0,y:0},{x:3,y:0}]));
+console.log('Wall polyline and 90-degree miter tests passed');

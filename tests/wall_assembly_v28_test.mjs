@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {moveSharedVertex,coordinateWallPath} from '../src/wall-polyline.mjs';
+import {unionOrthogonalWalls} from '../src/solid-kernel.mjs';
+const walls=[{id:'w1',type:'wall',pathId:'p',pathIndex:0,x1:0,y1:0,x2:4000,y2:0,z:0,height:3000,thickness:200},{id:'w2',type:'wall',pathId:'p',pathIndex:1,x1:4000,y1:0,x2:4000,y2:3000,z:0,height:3000,thickness:200}];
+assert.equal(moveSharedVertex(walls,'w1',2,{x:4500,y:0}),2);
+assert.equal(walls[1].x1,4500);
+assert.equal(coordinateWallPath(walls,'p').segments,2);
+const joined=unionOrthogonalWalls(walls);
+assert(joined.vertices.length>0&&joined.indices.length>0);
+assert(joined.volumeMM3>0);
+assert.throws(()=>moveSharedVertex(walls,'w1',2,{x:NaN,y:0}),/Invalid/);
+console.log('Coordinated path vertex and union mesh tests PASS');
