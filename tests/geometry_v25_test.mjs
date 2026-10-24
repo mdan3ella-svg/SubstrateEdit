@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {solidForElement,unionOrthogonalWalls} from '../src/solid-kernel.mjs';
+import {rightAngleFillet} from '../src/modify-core.mjs';
+const slab={id:'s',type:'slab',x1:0,x2:5000,y1:0,y2:4000,z:0,height:250,holes:[{x1:1000,x2:2000,y1:1000,y2:2000}]};
+const solid=solidForElement(slab,{elements:[slab]});assert.equal(solid.volumeMM3,4750000000);assert.equal(solid.cuts,1);assert.ok(solid.faces>6);
+const a={id:'a',type:'wall',x1:0,y1:0,x2:4000,y2:0,z:0,thickness:200,height:3000};
+const b={id:'b',type:'wall',x1:4000,y1:0,x2:4000,y2:3000,z:0,thickness:200,height:3000};
+const union=unionOrthogonalWalls([a,b]);
+const isolated=unionOrthogonalWalls([a]).volumeMM3+unionOrthogonalWalls([b]).volumeMM3;
+assert.ok(union.volumeMM3<isolated);assert.ok(union.indices.length>0);
+assert.throws(()=>unionOrthogonalWalls([{...a,y2:500}]),/Orthogonal/);
+const p={...a},q={...b};const f=rightAngleFillet(p,q,250);assert.ok(Math.abs(Math.hypot(f.p1.x-f.center.x,f.p1.y-f.center.y)-250)<1e-6);assert.equal(f.arc.type,'circular-arc');
+console.log('v2.5 slab cut, wall union, analytic arc assertions passed');

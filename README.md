@@ -58,3 +58,6 @@ Run plotting tests: `node tests/plot_test.mjs` and `python tests/static_audit.py
 - Drawing, authoring, paper-space plotting and native save/open retain their existing browser-native startup; no npm dependencies required.
 - `node tests/v23_test.mjs` checks real Boolean cut volumes, rotated-host volumes and label collision avoidance.
 - Limits: no NURBS, generic solid intersection, industrial B-rep topology certification or exact assembly fusion.
+
+
+See docs/GEOMETRY_V25.md for upgraded operations and their verified scope.
