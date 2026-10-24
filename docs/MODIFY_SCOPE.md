@@ -1,0 +1,3 @@
+# SUBSTRATE PRO v2.4 — Modify tool scope
+
+All coordinates are millimetres. Wall joins connect centerline endpoints, not solid mitered junctions. Fillet creates twelve straight wall segments approximating a quarter circle, not an exact circular B-rep. Slab rectangular voids are included in plan display and net quantity calculation; iso mesh/plot representations are not yet cut. Wall Elevation Cut creates a hosted rectangular opening in the parametric wall preview. Trim/extend uses intersections of infinite centerlines. Vertex Edit and Move Gizmo work in Plan with snapped coordinates. IFC and generalized exact Boolean operations are not claimed.

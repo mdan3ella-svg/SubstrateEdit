@@ -1,3 +1,4 @@
+import {solidForElement} from './solid-kernel.mjs';
 // SUBSTRATE PRO — deterministic, model-derived tags and preliminary schedules.
 // No invented specification data. Values derive from actual stored fields.
 export const finite=(x,f=0)=>Number.isFinite(Number(x))?Number(x):f;
@@ -6,7 +7,7 @@ export function assemblyRows(doc){const elems=(doc.elements||[]).filter(e=>e.vis
  const H=finite(e.height),T=finite(e.thickness),gross=L*H*T/1e9;
  const openings=e.type==='wall'?elems.filter(o=>['door','window'].includes(o.type)&&o.hostId===e.id):[];
  const cut=openings.reduce((v,o)=>v+Math.min(L,finite(o.width))*Math.min(H,finite(o.height))*T/1e9,0);
- const volume=['door','window'].includes(e.type)?null:['wall','beam'].includes(e.type)?Math.max(0,gross-cut):['slab','column'].includes(e.type)?Math.abs((finite(e.x2)-finite(e.x1))*(finite(e.y2)-finite(e.y1))*H)/1e9:null;
+ let volume=null; if(['wall','beam','slab','column'].includes(e.type)){try{volume=solidForElement(e,doc).volumeM3}catch{volume=null}}
  const tag=(e.tag||`${{wall:'W',slab:'S',beam:'B',column:'C',door:'D',window:'WN'}[e.type]||'E'}-${String(i+1).padStart(3,'0')}`);
  return {id:e.id,tag,name:e.name||e.type,type:e.type,discipline:e.discipline||'Architecture',level:e.level||'L1',material:e.material||'Unspecified',classification:e.classification||'',lengthMM:Math.round(L),heightMM:H,thicknessMM:T,volumeM3:volume,host:host?.id||'',openingCount:openings.length};
 })}

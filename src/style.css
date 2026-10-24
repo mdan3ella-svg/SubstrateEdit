@@ -3,3 +3,5 @@
 
 /* Paper space plot editor */
 .plotControls{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px;margin:8px 0 12px}.plotControls label{font-size:11px;font-weight:700;display:flex;flex-direction:column;gap:4px}.plotControls input,.plotControls select{background:white;padding:7px;border:1px solid #bdcfd1;border-radius:5px;min-width:0;width:100%;color:#17383e}.plotActions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin:8px 0}.plotActions button:first-child{background:#e4f2ef}.plotSheet{margin:12px auto;max-width:100%;background:white;border:1px solid #cedade;box-shadow:0 3px 12px #19394323;overflow:auto}.plotSheet svg{display:block;width:100%;height:auto;max-width:100%}.plotNotice{color:#536b72;font-size:11px;line-height:1.6}
+
+.modifyButtons button{min-height:35px;font-size:11px}.modifyButtons button.active{background:#16494f;color:white}.gizmoHandle{position:absolute;pointer-events:none}#modifyPrompt{font-size:11px;line-height:1.5;border-left:3px solid #168880;background:#edf8f5;padding:8px;margin:9px 0}.right #results{max-height:210px}

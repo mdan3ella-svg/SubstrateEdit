@@ -50,3 +50,11 @@ Run plotting tests: `node tests/plot_test.mjs` and `python tests/static_audit.py
 - Opening data remains hosted by a wall element ID. Preliminary volume accounts for rectangular hosted cuts, and all quantities are explicitly non-certified.
 - This is **not** a complete IFC/OCCT kernel, fabrication document generator, clash detection service, code checker or standards certification. It does not invent specifications absent from the model. Annotation collisions are reduced with a simple spacing rule, but not globally optimized.
 - Static tests: `node tests/author_test.mjs` and `node tests/plot_test.mjs`.
+
+
+## v2.3 precision upgrades
+- Verified bounded rectilinear CSG solid partition kernel (NOT OpenCascade or general B-rep). Click **Verify Solids** to run volume validation and generate host-opening solids.
+- Global paper-space label collision avoidance, stable labels and overflow reporting.
+- Drawing, authoring, paper-space plotting and native save/open retain their existing browser-native startup; no npm dependencies required.
+- `node tests/v23_test.mjs` checks real Boolean cut volumes, rotated-host volumes and label collision avoidance.
+- Limits: no NURBS, generic solid intersection, industrial B-rep topology certification or exact assembly fusion.

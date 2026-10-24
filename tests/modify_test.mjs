@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';import {offsetSegment,rotateElement,flipElement,joinWalls,rightAngleFillet,holeForSlab,slabNetArea,wallHole,trimExtend} from '../src/modify-core.mjs';
+const w=()=>({type:'wall',x1:0,y1:0,x2:4000,y2:0,height:3000,thickness:200});let a=w();offsetSegment(a,200);assert.equal(a.y1,200);rotateElement(a,90,{x:0,y:200});assert.equal(Math.round(a.x2),0);flipElement(a);assert.equal(Math.round(a.y1),4200);
+let s={type:'slab',x1:0,y1:0,x2:5000,y2:4000,holes:[]};holeForSlab(s,{x1:1000,y1:1000,x2:2000,y2:2000});assert.equal(slabNetArea(s),19000000);assert.throws(()=>holeForSlab(s,{x1:1500,y1:1500,x2:2500,y2:2500}));
+let x=w(),y={...w(),x1:4000,y1:0,x2:4000,y2:3000};const joined=joinWalls(x,y,20);assert.equal(joined.x,4000);assert.equal(joined.y,0);assert.equal(wallHole(x,{u:.5,width:900,sill:0,height:2100}).width,900);
+let p=w(),q={...w(),x1:4000,y1:0,x2:4000,y2:3000};let f=rightAngleFillet(p,q,300);assert.equal(f.points.length,13);assert.equal(Math.round(p.x2),3700);assert.throws(()=>rightAngleFillet(w(),{...w(),y1:200,y2:200},300));
+let t={...w(),x2:2000},target={...w(),x1:3500,x2:3500,y1:-1000,y2:1000};trimExtend(t,target,{x:2000,y:0},'extend');assert.equal(t.x2,3500);console.log('modify geometry tests passed');
