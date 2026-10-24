@@ -1,0 +1,28 @@
+from playwright.sync_api import sync_playwright
+from pathlib import Path
+with sync_playwright() as p:
+ browser=p.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox','--disable-gpu'])
+ page=browser.new_page(viewport={'width':1600,'height':940})
+ errors=[]
+ page.on('pageerror',lambda e: errors.append(str(e)))
+ page.goto('http://127.0.0.1:8765/')
+ page.wait_for_timeout(500)
+ print('Errors',errors,'ready',page.evaluate('window.SUBSTRATE?.App.initialized'))
+ page.get_by_role('button',name='Sample').click();print('objects after sample',page.evaluate('window.SUBSTRATE.App.doc.elements.length'))
+ page.get_by_role('button',name='Plan',exact=True).click()
+ page.locator('[data-tool="wall"]').click()
+ r=page.locator('#viewport').bounding_box(); print('canvas',r)
+ page.mouse.click(r['x']+230,r['y']+200)
+ page.mouse.click(r['x']+350,r['y']+200)
+ print('after wall',page.evaluate('window.SUBSTRATE.App.doc.elements.length'))
+ page.locator('[data-tool="select"]').click()
+ page.locator('[data-action="undo"]').first.click()
+ print('after undo',page.evaluate('window.SUBSTRATE.App.doc.elements.length'))
+ page.locator('[data-action="redo"]').first.click()
+ print('after redo',page.evaluate('window.SUBSTRATE.App.doc.elements.length'))
+ page.get_by_role('button',name='3D Iso',exact=True).click()
+ page.locator('[data-action="sheet"]').first.click()
+ print('sheet shown',page.locator('#overlay').is_visible(),'svgs',page.locator('#overlay svg').count())
+ page.screenshot(path='/mnt/data/SUBSTRATE_PRO_Functional/preview.png',full_page=True)
+ print('final errors',errors)
+ browser.close()
