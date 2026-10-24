@@ -28,3 +28,25 @@ Upload `index.html` and the complete `src/` folder together to GitHub Pages, Clo
 
 ## QA
 `node --check src/app.js` checks executable JavaScript syntax. `python tests/static_audit.py` checks referenced controls and module paths. Live interaction smoke test is in `tests/smoke.py` but the provided sandbox browser policy may block local navigation.
+
+## Paper-space plot composer (v2.1)
+
+Use **Plot / Sheet Setup** (top toolbar) or **Sheet Composer / PDF** (Documentation).
+
+- ISO A0–A4, ANSI A/B, ARCH D. Portrait or landscape; SVG dimensions are millimetres.
+- Auto fit chooses a standard 1:N drawing scale from the model bounds, or select an explicit scale. Orthographic projections are drawn at 1:N; isometric is marked NTS.
+- View placement is centered by default with manual shift X/Y (paper millimetres). Viewport content clips to the drawing box, protecting other views and title block.
+- Adjustable page margin, lineweight assignments in mm, preliminary hatch graphics, four-view or single-view arrangement, revision/title/number/date/issuer title block.
+- Export Scaled SVG for vector plotting; Print/PDF uses CSS @page matching the selected paper size. Set browser print scaling to **100%**, margins **None**, and disable headers/footers; verify a known dimension with a physical ruler or PDF measurement before issuing.
+
+**Limitations:** This is a conceptual plotting workflow, not a certified ISO 19650/ISO 128 drawing standards implementation. An exact PDF printer driver, CTB/STB pen mapping, multi-sheet sets, professionally annotated dimension strings, true section clipping and specialist discipline symbols are not included. Printed results can vary by browser/driver; the SVG is the authoritative scaled vector deliverable.
+
+Run plotting tests: `node tests/plot_test.mjs` and `python tests/static_audit.py`.
+
+## v2.2 — Associative auto-authoring
+
+- **Auto Author / Publish** produces a model-derived assembly register with preliminary net volume and hosted opening associations. The authoring controls also export a CSV schedule and open the scaled sheet composer.
+- **Auto tags + dimensions on plots** adds assembly material leaders and wall/beam length callouts onto plan and elevation paper-space views. Values are recalculated from model fields each time sheets are generated; editing the source geometry and rebuilding updates the annotations. Tags may be manually overridden using **Assembly Tag** under properties.
+- Opening data remains hosted by a wall element ID. Preliminary volume accounts for rectangular hosted cuts, and all quantities are explicitly non-certified.
+- This is **not** a complete IFC/OCCT kernel, fabrication document generator, clash detection service, code checker or standards certification. It does not invent specifications absent from the model. Annotation collisions are reduced with a simple spacing rule, but not globally optimized.
+- Static tests: `node tests/author_test.mjs` and `node tests/plot_test.mjs`.

@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {assemblyRows,validateAssemblies,scheduleCSV} from '../src/author.mjs';
+import {buildPlotSVG} from '../src/plot.mjs';
+const doc={title:'QA',elements:[{id:'w1',type:'wall',name:'Test wall',material:'Concrete',level:'L1',visible:true,x1:0,y1:0,x2:5000,y2:0,z:0,height:3000,thickness:200},{id:'d1',type:'door',hostId:'w1',name:'Door',level:'L1',material:'Wood',visible:true,u:.5,width:1000,z:0,height:2100,thickness:200}]};
+let rows=assemblyRows(doc);assert.equal(rows.length,2);assert.equal(rows[0].openingCount,1);assert.equal(rows[0].volumeM3,2.58);assert.equal(rows[1].host,'w1');assert.equal(validateAssemblies(doc).issues.length,0);assert.match(scheduleCSV(doc),/Concrete/);
+let svg=buildPlotSVG(doc,{views:'single',mainView:'plan'});assert.match(svg,/W-001/);assert.match(svg,/Concrete/);assert.match(svg,/>5000<|>5000<\/text>/);
+doc.elements[0].x2=6000;rows=assemblyRows(doc);assert.equal(rows[0].lengthMM,6000);assert.equal(rows[0].volumeM3,3.18);svg=buildPlotSVG(doc,{views:'single',mainView:'plan'});assert.match(svg,/>6000</);
+doc.autoAnnotations=false;assert.doesNotMatch(buildPlotSVG(doc,{views:'single',mainView:'plan'}),/W-001/);
+doc.elements[1].hostId='absent';assert.equal(validateAssemblies(doc).issues.length,1);
+console.log('Associative authoring: 12 assertions passed');

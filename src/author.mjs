@@ -1,0 +1,15 @@
+// SUBSTRATE PRO — deterministic, model-derived tags and preliminary schedules.
+// No invented specification data. Values derive from actual stored fields.
+export const finite=(x,f=0)=>Number.isFinite(Number(x))?Number(x):f;
+export function assemblyRows(doc){const elems=(doc.elements||[]).filter(e=>e.visible!==false);const byId=new Map(elems.map(e=>[e.id,e]));return elems.filter(e=>!['line','dimension'].includes(e.type)).map((e,i)=>{
+ const host=byId.get(e.hostId),L=['door','window'].includes(e.type)?finite(e.width):Math.hypot(finite(e.x2)-finite(e.x1),finite(e.y2)-finite(e.y1));
+ const H=finite(e.height),T=finite(e.thickness),gross=L*H*T/1e9;
+ const openings=e.type==='wall'?elems.filter(o=>['door','window'].includes(o.type)&&o.hostId===e.id):[];
+ const cut=openings.reduce((v,o)=>v+Math.min(L,finite(o.width))*Math.min(H,finite(o.height))*T/1e9,0);
+ const volume=['door','window'].includes(e.type)?null:['wall','beam'].includes(e.type)?Math.max(0,gross-cut):['slab','column'].includes(e.type)?Math.abs((finite(e.x2)-finite(e.x1))*(finite(e.y2)-finite(e.y1))*H)/1e9:null;
+ const tag=(e.tag||`${{wall:'W',slab:'S',beam:'B',column:'C',door:'D',window:'WN'}[e.type]||'E'}-${String(i+1).padStart(3,'0')}`);
+ return {id:e.id,tag,name:e.name||e.type,type:e.type,discipline:e.discipline||'Architecture',level:e.level||'L1',material:e.material||'Unspecified',classification:e.classification||'',lengthMM:Math.round(L),heightMM:H,thicknessMM:T,volumeM3:volume,host:host?.id||'',openingCount:openings.length};
+})}
+export function validateAssemblies(doc){const rows=assemblyRows(doc),ids=new Set(),issues=[];for(const e of doc.elements||[]){if(!e.id||ids.has(e.id))issues.push(`Missing/duplicate ID: ${e.id||'none'}`);ids.add(e.id);if(['wall','slab','column','beam'].includes(e.type)&&finite(e.height)<=0)issues.push(`${e.id}: non-positive height`);if(['door','window'].includes(e.type)&&!doc.elements.some(h=>h.id===e.hostId&&h.type==='wall'))issues.push(`${e.id}: missing wall host`)}return {rows,issues}}
+export function scheduleCSV(doc){const rows=assemblyRows(doc),fields=['tag','name','type','discipline','level','material','classification','lengthMM','heightMM','thicknessMM','volumeM3','host','openingCount'];const quoted=v=>'"'+String(v??'').replace(/"/g,'""')+'"';return [fields.join(','),...rows.map(r=>fields.map(f=>quoted(r[f])).join(','))].join('\r\n')}
+export function scheduleHTML(doc){const {rows,issues}=validateAssemblies(doc),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));return `<p>Associative schedule generated from ${rows.length} visible BIM objects. Values update when element properties change. Not certified.</p><table><thead><tr>${['Tag','Type','Level','Material','Length mm','Height mm','Net m³','Host'].map(s=>`<th>${s}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${[r.tag,r.type,r.level,r.material,r.lengthMM,r.heightMM,r.volumeM3==null?'—':r.volumeM3.toFixed(3),r.host||'—'].map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table><p>${issues.length?esc(issues.join('; ')):'Assembly references validated.'}</p>`}
