@@ -1,0 +1,3 @@
+import assert from 'node:assert/strict';
+import {ensureCoordination,coordinateAudit,setLevelElevation,codeChecklist,axisLabel} from '../src/bim-coordination.mjs';
+const d={elements:[{id:'w1',level:'L2',z:3000}]};ensureCoordination(d);assert.equal(d.levels.length,4);assert.equal(d.grids.x.length,5);assert.equal(setLevelElevation(d,'L2',3600),600);assert.equal(d.elements[0].z,3600);assert.deepEqual(coordinateAudit(d),[]);assert.equal(axisLabel('x',0),'A');assert.equal(axisLabel('y',3),'4');assert.equal(codeChecklist(d)[0].state,'missing');d.grids.x.push(3000);assert(coordinateAudit(d).length);console.log('Coordination tests passed');

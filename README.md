@@ -61,3 +61,9 @@ Run plotting tests: `node tests/plot_test.mjs` and `python tests/static_audit.py
 
 
 See docs/GEOMETRY_V25.md for upgraded operations and their verified scope.
+
+## v2.6 — BIM coordination and code-basis review
+- **Grids & Levels** edits project datum elevations and structural grid positions (millimetres). Plan shows grid lines and identifiers; elevation views show story datums. Existing level-hosted geometry follows the edited level elevation, including openings assigned to that level.
+- **IBC / OBC Review** records jurisdiction, code edition/amendments, occupancy, construction type, fire-rating basis and responsible reviewer. The checklist reports missing data and explicitly defers substantive code determinations to qualified reviewers.
+- These records persist in `.substratepro` native JSON files. Model Audit includes level references, elevation deviations, and grid definition errors. Geometry and drawing tests run with Node and require no npm dependencies.
+- **NOT PROVIDED:** OpenCascade WASM B-rep, geometric fillet topology, general B-rep Boolean joining, manifold/watertight certification, IFC schema conformance, or IBC/OBC compliance certification. Those require a compiled exact kernel, topological verification and appropriate professional review. The bounded CSG model is not presented as interchangeable with those capabilities.
